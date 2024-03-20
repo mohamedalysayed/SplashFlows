@@ -109,9 +109,6 @@ class App(customtkinter.CTk):
 
         self.radio_var = tkinter.IntVar(value=0)
 
-        self.slider_1 = customtkinter.CTkSlider(master=self.frame_right, from_=0, to=1,
-                                                 number_of_steps=3, command=self.progressbar.set)
-        self.slider_1.grid(row=4, column=0, columnspan=2, pady=10, padx=20, sticky="we")
 
         self.slider_2 = customtkinter.CTkSlider(master=self.frame_right, command=self.progressbar.set)
         self.slider_2.grid(row=5, column=0, columnspan=2, pady=10, padx=20, sticky="we")
@@ -127,7 +124,6 @@ class App(customtkinter.CTk):
 
         #self.radio_button_1.select()
         self.switch_2.select()
-        self.slider_1.set(0.2)
         self.slider_2.set(0.7)
         self.progressbar.set(0.5)
         
