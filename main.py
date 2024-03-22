@@ -12,8 +12,8 @@ customtkinter.set_default_color_theme("dark-blue")
 
 class App(customtkinter.CTk):
 
-    WIDTH = 1200
-    HEIGHT = 700
+    WIDTH = 1400
+    HEIGHT = 800
 
     def __init__(self):
         super().__init__()
@@ -72,8 +72,6 @@ class App(customtkinter.CTk):
         self.divide_checkbox.grid(row=9, column=0, pady=10, padx=20)
         self.convert_checkbox.grid(row=10, column=0, pady=10, padx=20)
 
-        
-        
         # Switch for changing program theme
         self.switch_2 = customtkinter.CTkSwitch(master=self.frame_left, text="Dark Mode",
                                                  command=self.change_mode)
@@ -108,7 +106,6 @@ class App(customtkinter.CTk):
         self.progressbar.grid(row=1, column=0, sticky="ew", padx=15, pady=15)
 
         self.radio_var = tkinter.IntVar(value=0)
-
 
         self.slider_2 = customtkinter.CTkSlider(master=self.frame_right, command=self.progressbar.set)
         self.slider_2.grid(row=5, column=0, columnspan=2, pady=10, padx=20, sticky="we")
@@ -212,7 +209,6 @@ class App(customtkinter.CTk):
 
     def start(self):
         self.mainloop()
-
 
 if __name__ == "__main__":
     app = App()
