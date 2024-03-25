@@ -62,7 +62,7 @@ class App(customtkinter.CTk):
         self.test_case_combobox.set("Select Case")  # Set the default item as the selected value
 
         self.load_case_button = customtkinter.CTkButton(master=self.frame_left, text="Load Case", command=self.load_case)
-        self.load_case_button.grid(row=4, column=0, pady=10, padx=20, sticky="we")
+        self.load_case_button.grid(row=3, column=0, pady=10, padx=20, sticky="we")
         
         # Initialize the variable to store the selected case path
         self.selected_case_path = None
@@ -125,6 +125,31 @@ class App(customtkinter.CTk):
         # Create the Text widget within the new frame
         self.output_text = tkinter.Text(master=self.text_widget_frame, height=30, width=120, bg="black", fg="white", wrap=tkinter.WORD)
         self.output_text.grid(row=0, column=0, sticky="nsew", padx=15, pady=15)
+        
+        # Insert the default welcome message at the beginning
+        
+        ascii_art_message = """
+                                                        
+                     /  |      /                                               
+                    (   | ___ (  ___  ___  _ _  ___                            
+                    | / )|___)| |    |   )| | )|___)                           
+                    |/|/ |__  | |__  |__/ |  / |__                             
+                                                                               
+                                                                               
+                                    /                                          
+                                   (___  ___                                   
+                                   |    |   )                                  
+                                   |__  |__/                                   
+                                                                               
+                           __                              ___                 
+                          /         /           /         /    /               
+                         (___  ___ (  ___  ___ (___      (___ (  ___       ___ 
+                             )|   )| |   )|___ |   ) __  |    | |   )|   )|___ 
+                          __/ |__/ | |__/| __/ |  /      |    | |__/ |/\/  __/ 
+                                                     
+        
+        """ 
+        self.output_text.insert("1.0", ascii_art_message)
 
         # Create and place the scrollbar next to the Text widget
         self.output_scrollbar = tkinter.Scrollbar(master=self.text_widget_frame, command=self.output_text.yview)
@@ -386,8 +411,6 @@ class App(customtkinter.CTk):
         self.after(1000, self.update_elapsed_time)
         
     
-
-             
     def button_event(self):
         print("Button pressed")
 
