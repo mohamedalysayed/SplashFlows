@@ -15,7 +15,7 @@ customtkinter.set_default_color_theme("dark-blue")
 class App(customtkinter.CTk):
 
     WIDTH = 1250
-    HEIGHT = 750
+    HEIGHT = 900
 
     def __init__(self):
         super().__init__()
@@ -122,9 +122,12 @@ class App(customtkinter.CTk):
         self.text_widget_frame.grid_rowconfigure(0, weight=1)
         self.text_widget_frame.grid_rowconfigure(1, weight=0)
 
-        # Create the Text widget within the new frame
+        # Create the Text widget within the new frame (text box)
         self.output_text = tkinter.Text(master=self.text_widget_frame, height=30, width=120, bg="black", fg="white", wrap=tkinter.WORD)
         self.output_text.grid(row=0, column=0, sticky="nsew", padx=15, pady=15)
+        
+        # Configure a tag for cyan-colored text
+        self.output_text.tag_configure("cyan_text", foreground="cyan")
         
         # Insert the default welcome message at the beginning
         
@@ -150,6 +153,9 @@ class App(customtkinter.CTk):
         
         """ 
         self.output_text.insert("1.0", ascii_art_message)
+        
+        # Apply the "cyan_text" tag to the entire message
+        self.output_text.tag_add("cyan_text", "1.0", "end")
 
         # Create and place the scrollbar next to the Text widget
         self.output_scrollbar = tkinter.Scrollbar(master=self.text_widget_frame, command=self.output_text.yview)
