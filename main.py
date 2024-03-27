@@ -11,10 +11,9 @@ from tkinter import simpledialog, Toplevel, Radiobutton, StringVar
 customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("dark-blue")
 
-
 class App(customtkinter.CTk):
 
-    WIDTH = 1250
+    WIDTH = 1300
     HEIGHT = 900
 
     def __init__(self):
@@ -67,8 +66,7 @@ class App(customtkinter.CTk):
         # Initialize the variable to store the selected case path
         self.selected_case_path = None
         #-------------------------------------------< 
-        
-        # Other buttons 
+         
         # Add Construct Geometry button
         self.construct_geometry_button = customtkinter.CTkButton(master=self.frame_left, text="Construct Geometry", command=self.construct_geometry)
         self.construct_geometry_button.grid(row=1, column=1, pady=10, padx=20, sticky="we")
@@ -274,7 +272,6 @@ class App(customtkinter.CTk):
         submit_button = customtkinter.CTkButton(popup, text="Submit", command=on_submit)
         submit_button.pack(pady=10)
             
-
     def display_dom_file_content(self):
         self.dom_file_name = None  # Reset or declare this variable
         dom_files = [file for file in os.listdir(self.selected_case_path) if file.endswith('.dom')]
@@ -324,10 +321,7 @@ class App(customtkinter.CTk):
                         print(f"Error creating link for {item}: {e}")
                 else:
                     print(f"Link already exists for {item}")
-            
-        
     # ------------------------- Template cases of T-Flows --------------------------
-                
 
     def execute_command(self):
         # Retrieve the command from the entry widget
@@ -416,7 +410,6 @@ class App(customtkinter.CTk):
         # Schedule the next update call to this method after 1000ms (1 second)
         self.after(1000, self.update_elapsed_time)
         
-    
     def button_event(self):
         print("Button pressed")
 
