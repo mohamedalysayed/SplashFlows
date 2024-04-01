@@ -19,7 +19,7 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("SplashFlow complex example")
+        self.title("SplashFlows")
         self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
 
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
