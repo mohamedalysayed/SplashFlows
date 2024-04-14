@@ -8,6 +8,9 @@ import time
 import threading
 from tkinter import simpledialog, Toplevel, Radiobutton, StringVar
 
+# Calling ext. classes and functions
+from geometry_constructor import GeometryConstructor 
+
 customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("dark-blue")
 
@@ -68,7 +71,8 @@ class App(customtkinter.CTk):
         #-------------------------------------------< 
          
         # Add Construct Geometry button
-        self.construct_geometry_button = customtkinter.CTkButton(master=self.frame_left, text="Construct Geometry", command=self.construct_geometry)
+        ##self.construct_geometry_button = customtkinter.CTkButton(master=self.frame_left, text="Construct Geometry", command=self.construct_geometry)
+        self.construct_geometry_button = customtkinter.CTkButton(master=self.frame_left, text="Construct Geometry", command=self.activate_geometry_constructor)
         self.construct_geometry_button.grid(row=1, column=1, pady=10, padx=20, sticky="we")
 
         # Add Generate Mesh button
@@ -202,6 +206,12 @@ class App(customtkinter.CTk):
         
         # Call the timer function to start counting the time 
         self.update_elapsed_time()
+        
+        
+    def activate_geometry_constructor(self):
+        # This method can activate the GeometryConstructor
+        self.geometry_constructor = GeometryConstructor(self)
+        # You might want to call a method from GeometryConstructor here if needed
         
     def update_progress(self, value):
         # Assuming value is between 0 and 1
