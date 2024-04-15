@@ -29,7 +29,7 @@ class GeometryConstructor:
         self.save_geometry_to_vtk(length, width, height)
 
     def save_geometry_to_vtk(self, length, width, height):
-        # Dummy function to mimic VTK file saving
+        # Dummy function to mimic VTK file saving | FLAG: start here...
         print("Saving geometry to VTK format...")
 
 if __name__ == "__main__":
