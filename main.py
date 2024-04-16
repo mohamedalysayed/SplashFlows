@@ -8,7 +8,7 @@ import time
 import threading
 from tkinter import simpledialog, Toplevel, Radiobutton, StringVar
 
-# Calling ext. classes and functions
+# Calling external classes and functions
 from geometry_constructor import GeometryConstructor 
 
 customtkinter.set_appearance_mode("Dark")
