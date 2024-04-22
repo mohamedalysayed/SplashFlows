@@ -134,6 +134,7 @@ class App(customtkinter.CTk):
         # Insert the default welcome message at the beginning
         
         ascii_art_message = """
+
                                                         
                      /  |      /                                               
                     (   | ___ (  ___  ___  _ _  ___                            
