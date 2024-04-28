@@ -8,12 +8,15 @@ import time
 import threading
 from tkinter import simpledialog, Toplevel, Radiobutton, StringVar
 
+# Calling ext. classes and functions
+from geometry_constructor import GeometryConstructor 
+
 customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("dark-blue")
 
 class App(customtkinter.CTk):
 
-    WIDTH = 1350
+    WIDTH = 1300
     HEIGHT = 950
 
     def __init__(self):
@@ -68,7 +71,8 @@ class App(customtkinter.CTk):
         #-------------------------------------------< 
          
         # Add Construct Geometry button
-        self.construct_geometry_button = customtkinter.CTkButton(master=self.frame_left, text="Construct Geometry", command=self.construct_geometry)
+        ##self.construct_geometry_button = customtkinter.CTkButton(master=self.frame_left, text="Construct Geometry", command=self.construct_geometry)
+        self.construct_geometry_button = customtkinter.CTkButton(master=self.frame_left, text="Construct Geometry", command=self.activate_geometry_constructor)
         self.construct_geometry_button.grid(row=1, column=1, pady=10, padx=20, sticky="we")
 
         # Add Generate Mesh button
@@ -203,6 +207,11 @@ class App(customtkinter.CTk):
         # Call the timer function to start counting the time 
         self.update_elapsed_time()
         
+    def activate_geometry_constructor(self):
+        # This method can activate the GeometryConstructor
+        self.geometry_constructor = GeometryConstructor(self)
+        # You might want to call a method from GeometryConstructor here if needed
+        
     def update_progress(self, value):
         # Assuming value is between 0 and 1
         self.progressbar.set(value)
@@ -300,27 +309,35 @@ class App(customtkinter.CTk):
         binaries_path = os.path.abspath("../Binaries")  # Path to the Binaries directory
         target_dir = self.selected_case_path  # Target directory where links will be created
 
-        # Check if the Binaries directory exists
         if not os.path.exists(binaries_path):
             print("Binaries directory does not exist. Skipping link creation.")
             return
 
-        # Iterate over each file in the Binaries directory
+        # List all items in the Binaries directory
         for item in os.listdir(binaries_path):
             source_path = os.path.join(binaries_path, item)
             link_path = os.path.join(target_dir, item)
 
-            # Check if the item is a file and is executable
+            # Check if the item is executable
             if os.path.isfile(source_path) and os.access(source_path, os.X_OK):
-                # Check if the link already exists, if not, create a symbolic link
-                if not os.path.exists(link_path):
-                    try:
-                        os.symlink(source_path, link_path)
-                        print(f"Link created for {item}")
-                    except Exception as e:
-                        print(f"Error creating link for {item}: {e}")
-                else:
-                    print(f"Link already exists for {item}")
+                # Check if the link or file already exists at the destination
+                if os.path.exists(link_path):
+                    print(f"Link or file already exists for {item}.")
+                    # Optionally, uncomment the next line to ask user input or handle it interactively
+                    # overwrite = input(f"File {item} already exists. Overwrite? (y/n): ")
+                    # if overwrite.lower() != 'y':
+                    #     continue
+
+                # Create or overwrite the symbolic link
+                try:
+                    # Remove the existing file/link if necessary
+                    if os.path.exists(link_path):
+                        os.remove(link_path)
+                    os.symlink(source_path, link_path)
+                    print(f"Link created for {item}")
+                except Exception as e:
+                    print(f"Error creating link for {item}: {e}")
+            
     # ------------------------- Template cases of T-Flows --------------------------
 
     def execute_command(self):
@@ -397,6 +414,30 @@ class App(customtkinter.CTk):
 
     def generate_mesh(self):
         print("Generating Mesh...")
+        script_path = os.path.join(self.selected_case_path, "generate.scr")
+
+        # Check if the script file exists in the selected case directory
+        if os.path.exists(script_path):
+            try:
+                # Run the shell command with the script
+                result = subprocess.run(f"./Generate < {script_path}", shell=True, cwd=self.selected_case_path, text=True, capture_output=True)
+
+                # Clear the existing content and insert the new output
+                self.output_text.delete(1.0, tkinter.END)
+                if result.stdout:
+                    self.output_text.insert(tkinter.END, result.stdout)
+                if result.stderr:
+                    self.output_text.insert(tkinter.END, f"Errors:\n{result.stderr}")
+
+                # After mesh generation, launch ParaView
+                subprocess.run("paraview &", shell=True, cwd=self.selected_case_path)
+
+            except Exception as e:
+                self.output_text.delete(1.0, tkinter.END)
+                self.output_text.insert(tkinter.END, f"Failed to generate mesh: {e}")
+        else:
+            self.output_text.delete(1.0, tkinter.END)
+            self.output_text.insert(tkinter.END, "generate.scr not found in the selected case directory.")
 
     def run_case(self):
         print("Running Case...")
