@@ -15,45 +15,40 @@ customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("dark-blue")
 
 class App(customtkinter.CTk):
-
-    WIDTH = 1300
-    HEIGHT = 950
+    WIDTH = 1680
+    HEIGHT = 920
 
     def __init__(self):
         super().__init__()
 
         self.title("SplashFlows")
         self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
-
+        self.geometry("+0+0")
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
+        # App is made of 4 columns
         self.grid_columnconfigure(1, weight=1)
+        # App is made of 3 rows
         self.grid_rowconfigure(0, weight=1)
 
-        self.frame_left = customtkinter.CTkFrame(master=self, width=180, corner_radius=0)
-        self.frame_left.grid(row=0, column=0, sticky="nswe")
-
-        self.frame_right = customtkinter.CTkFrame(master=self)
-        self.frame_right.grid(row=0, column=1, sticky="nswe", padx=20, pady=20)
-
-        self.frame_left.grid_rowconfigure(0, minsize=10)
-        self.frame_left.grid_rowconfigure(5, weight=1)
-        self.frame_left.grid_rowconfigure(8, minsize=20)
-        self.frame_left.grid_rowconfigure(11, minsize=10)
-
-        # Initialize the timer parameters
-        self.start_time = time.time()
-        self.elapsed_time_label = customtkinter.CTkLabel(master=self.frame_right,
-                                                  text="Elapsed Time: 00:00:00",
-                                                  font=("Roboto Medium", 14))
-        self.elapsed_time_label.grid(row=11, column=2, rowspan=2, sticky="nsew", padx=20, pady=10)
-
-        # SplashFlows title and logo
-        self.label_1 = customtkinter.CTkLabel(master=self.frame_left, text="SplashFlows")
-        self.label_1.grid(row=1, column=0, pady=10, padx=10)
-        self.label_1.configure(font=("Roboto Medium", 16))
+        self.frame_left()
+        self.frame_middle_top()
+        self.frame_middle_bottom()
+        self.frame_right()
+        self.frame_right_bottom()
+    
+    def frame_left(self):
+        self.frame_left = customtkinter.CTkFrame(master=self)
+        self.frame_left.grid(row=0, column=0, rowspan=2, sticky="nswe", ipady=20)
         
-        #------------------------------------------------>
+        # Create a label widget
+        self.ltitle_frame = customtkinter.CTkFrame(master=self.frame_left, width=300, height=40)
+        self.ltitle_frame.grid(row=0, column=0, sticky="we", padx=15, pady=15)
+        self.ltitle_frame.grid_propagate(False)
+        self.ltitle = customtkinter.CTkLabel(master=self.ltitle_frame, text="SplashFlows")
+        self.ltitle.place(relx=0.5, rely=0.5, anchor="center")
+        self.ltitle.configure(font=("Roboto Medium", 20))
+
         # Case Types and Test Cases Selection
         self.case_type_combobox = customtkinter.CTkComboBox(master=self.frame_left, values=["Hybrid_Les_Rans", "Laminar", "Les", "Rans", "Swarm", "Vof"], command=self.update_test_cases)
         self.case_type_combobox.grid(row=1, column=0, pady=10, padx=20, sticky="we")
@@ -70,19 +65,20 @@ class App(customtkinter.CTk):
         self.selected_case_path = None
         #-------------------------------------------< 
          
-        # Add Construct Geometry button
+        # Add Construct Geometry button 
         ##self.construct_geometry_button = customtkinter.CTkButton(master=self.frame_left, text="Construct Geometry", command=self.construct_geometry)
         self.construct_geometry_button = customtkinter.CTkButton(master=self.frame_left, text="Construct Geometry", command=self.activate_geometry_constructor)
-        self.construct_geometry_button.grid(row=1, column=1, pady=10, padx=20, sticky="we")
+        self.construct_geometry_button.grid(row=4, column=0, pady=10, padx=20, sticky="we")
 
         # Add Generate Mesh button
         self.generate_mesh_button = customtkinter.CTkButton(master=self.frame_left, text="Generate Mesh", command=self.generate_mesh)
-        self.generate_mesh_button.grid(row=2, column=1, pady=10, padx=20, sticky="we")
+        self.generate_mesh_button.grid(row=5, column=0, pady=10, padx=20, sticky="we")
 
         # Add Run Case button
         self.run_case_button = customtkinter.CTkButton(master=self.frame_left, text="Run Case", command=self.run_case)
-        self.run_case_button.grid(row=3, column=1, pady=10, padx=20, sticky="we")
+        self.run_case_button.grid(row=6, column=0, pady=10, padx=20, sticky="we")
 
+        self.frame_left.grid_rowconfigure(7, weight=1)
 
         # Initialize the parameters for T-Flows sub-programs
         self.process_check_var = tkinter.IntVar(value=0)
@@ -91,122 +87,151 @@ class App(customtkinter.CTk):
         self.convert_check_var = tkinter.IntVar(value=0)
 
         # Configuration of the compile button and T-Flows pillers
-        self.compile_button = customtkinter.CTkButton(master=self.frame_left, text="Compile Code",
-                                                 command=self.compile_code)
-        self.process_checkbox = customtkinter.CTkCheckBox(master=self.frame_left, text="Process", variable=self.process_check_var)
-        self.generate_checkbox = customtkinter.CTkCheckBox(master=self.frame_left, text="Generate", variable=self.generate_check_var)
-        self.divide_checkbox = customtkinter.CTkCheckBox(master=self.frame_left, text="Divide", variable=self.divide_check_var)
-        self.convert_checkbox = customtkinter.CTkCheckBox(master=self.frame_left, text="Convert", variable=self.convert_check_var)
-        
-        # Compile the selected T-Flows sub-programs
-        self.compile_button.grid(row=6, column=0, pady=10, padx=20)
-        
+        self.compile_button = customtkinter.CTkButton(master=self.frame_left, text="Compile Code", command=self.compile_code, fg_color="cyan", text_color="black", hover_color="white", font=("Roboto Medium",16))
+        self.compile_button.grid(row=8, column=0, pady=10, padx=20, sticky="we") # Compile the selected T-Flows sub-programs
         # T-Flows pillers
-        self.process_checkbox.grid(row=7, column=0, pady=10, padx=20)
-        self.generate_checkbox.grid(row=8, column=0, pady=10, padx=20)
-        self.divide_checkbox.grid(row=9, column=0, pady=10, padx=20)
-        self.convert_checkbox.grid(row=10, column=0, pady=10, padx=20)
+        self.process_checkbox = customtkinter.CTkCheckBox(master=self.frame_left, text="Process", variable=self.process_check_var)
+        self.process_checkbox.grid(row=9, column=0, pady=10, padx=20, sticky="we")
+        self.generate_checkbox = customtkinter.CTkCheckBox(master=self.frame_left, text="Generate", variable=self.generate_check_var)
+        self.generate_checkbox.grid(row=10, column=0, pady=10, padx=20, sticky="we")
+        self.divide_checkbox = customtkinter.CTkCheckBox(master=self.frame_left, text="Divide", variable=self.divide_check_var)
+        self.divide_checkbox.grid(row=11, column=0, pady=10, padx=20, sticky="we")
+        self.convert_checkbox = customtkinter.CTkCheckBox(master=self.frame_left, text="Convert", variable=self.convert_check_var)
+        self.convert_checkbox.grid(row=12, column=0, pady=10, padx=20, sticky="we")       
 
-        # Switch for changing program theme
-        self.switch_2 = customtkinter.CTkSwitch(master=self.frame_left, text="Dark Mode",
-                                                 command=self.change_mode)
-        self.switch_2.grid(row=12, column=0, pady=10, padx=20, sticky="w")
-        
-        self.frame_right.rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
-        self.frame_right.rowconfigure(7, weight=1)
-        self.frame_right.columnconfigure((0, 1), weight=1)
-        self.frame_right.columnconfigure(2, weight=2)  # Give more weight to the column with the Text widget
-
-        # Create a new frame for the Text widget, its scrollbar, and the save button
-        self.text_widget_frame = customtkinter.CTkFrame(master=self.frame_right)
-        self.text_widget_frame.grid(row=0, column=2, rowspan=6, sticky="nsew", padx=20, pady=20)
-        self.text_widget_frame.grid_columnconfigure(0, weight=1)
-        self.text_widget_frame.grid_rowconfigure(0, weight=1)
-        self.text_widget_frame.grid_rowconfigure(1, weight=0)
-
+    def frame_middle_top(self):
         # Create the Text widget within the new frame (text box)
-        self.output_text = tkinter.Text(master=self.text_widget_frame, height=30, width=120, bg="black", fg="white", wrap=tkinter.WORD)
-        self.output_text.grid(row=0, column=0, sticky="nsew", padx=15, pady=15)
-        
-        # Configure a tag for cyan-colored text
-        self.output_text.tag_configure("cyan_text", foreground="cyan")
-        
+        self.output_text = tkinter.Text(master=self, height=30, width=90, bg="black", fg="white", wrap=tkinter.WORD)
+        self.output_text.grid(row=0, column=1, sticky="nsew", padx=(20,0), pady=(20,0))
+        self.output_text.tag_configure("cyan_text", foreground="cyan") # Configure a tag for cyan-colored text
+
         # Insert the default welcome message at the beginning
-        
         ascii_art_message = """
-                                                        
-                     /  |      /                                               
-                    (   | ___ (  ___  ___  _ _  ___                            
-                    | / )|___)| |    |   )| | )|___)                           
-                    |/|/ |__  | |__  |__/ |  / |__                             
-                                                                               
-                                                                               
-                                    /                                          
-                                   (___  ___                                   
-                                   |    |   )                                  
-                                   |__  |__/                                   
-                                                                               
-                           __                              ___                 
-                          /         /           /         /    /               
-                         (___  ___ (  ___  ___ (___      (___ (  ___       ___ 
-                             )|   )| |   )|___ |   ) __  |    | |   )|   )|___ 
-                          __/ |__/ | |__/| __/ |  /      |    | |__/ |/\/  __/ 
-                                                     
-        
+=======================================================================
+   __          __    _                                  _             
+   \ \        / /   | |                                | |            
+    \ \  /\  / /___ | |  ___  ___   _ __ ___    ___    | |_   ___      
+     \ \/  \/ // _ \| | / __|/ _ \ | '_ ` _ \  / _ \   | __| / _ \     
+      \  /\  /|  __/| || (__| (_) || | | | | ||  __/   | |_ | (_) |    
+       \/  \/  \___||_| \___|\___/ |_| |_| |_| \___|    \__| \___/     
+   _____         _              _      ______  _                      
+  / ____|       | |            | |    |  ____|| |                     
+ | (___   _ __  | |  __ _  ___ | |__  | |__   | |  ___  __      __ ___ 
+  \___ \ | '_ \ | | / _` |/ __|| '_ \ |  __|  | | / _ \ \ \ /\ / // __|
+  ____) || |_) || || (_| |\__ \| | | || |     | || (_) | \ V  V / \__ \\
+ |_____/ | .__/ |_| \__,_||___/|_| |_||_|     |_| \___/   \_/\_/  |___/
+         | |                ___    __     ___                         
+         |_|               / _ \  /_ |   / _ \                        
+                  __   __ | | | |  | |  | | | |                       
+                  \ \ / / | | | |  | |  | | | |                       
+                   \ V /  | |_| |_ | | _| |_| |                       
+                    \_/    \___/(_)|_|(_)\___/                        
+                    
+                       GUI tool for T-Flows 
+                    © 2024 SplashFlows v0.1.0
+=======================================================================                                       
         """ 
         self.output_text.insert("1.0", ascii_art_message)
-        
         # Apply the "cyan_text" tag to the entire message
         self.output_text.tag_add("cyan_text", "1.0", "end")
 
         # Create and place the scrollbar next to the Text widget
-        self.output_scrollbar = tkinter.Scrollbar(master=self.text_widget_frame, command=self.output_text.yview)
-        self.output_scrollbar.grid(row=0, column=1, sticky='nsew')
+        self.output_scrollbar = tkinter.Scrollbar(master=self, width=15, command=self.output_text.yview)
+        self.output_scrollbar.grid(row=0, column=2, sticky='nsw', pady=(20,0))
         self.output_text.config(yscrollcommand=self.output_scrollbar.set)
 
-        # Place the save button below the Text widget
-        self.save_button = customtkinter.CTkButton(master=self.text_widget_frame, text="Save Changes", command=self.save_dom_file)
-        self.save_button.grid(row=1, column=0, pady=(5, 0), sticky="ew")
+    def frame_middle_bottom(self):
+        self.frame_middle_bottom = customtkinter.CTkFrame(master=self)
+        self.frame_middle_bottom.grid(row=1, column=1, columnspan=2, sticky="nswe", padx=(20, 0), pady=20)
+        
+        self.mbtitle_frame = customtkinter.CTkFrame(master=self.frame_middle_bottom, width=900, height=40)
+        self.mbtitle_frame.grid(row=0, column=0, columnspan=3, sticky="we", padx=15, pady=15)
+        self.mbtitle_frame.grid_propagate(False)
+        self.mbtitle = customtkinter.CTkLabel(master=self.mbtitle_frame, text="Controls")
+        self.mbtitle.place(relx=0.5, rely=0.5, anchor="center")
+        self.mbtitle.configure(font=("Roboto Medium", 20))
 
+        # Place the save button below the Text widget
+        self.entry_label = customtkinter.CTkLabel(master=self.frame_middle_bottom, text="Working Directory:", anchor="w")
+        self.entry_label.grid(row=1, column=0, padx=20, pady=(10, 0), sticky="we")
+        self.entry = customtkinter.CTkEntry(master=self.frame_middle_bottom, placeholder_text="Select working directory...") # Case Types and Test Cases Selection
+        self.entry.grid(row=1, column=1, pady=10, padx=20, sticky="we")
+        self.save_button = customtkinter.CTkButton(master=self.frame_middle_bottom, text="Open Folder") # Add command to open folder
+        self.save_button.grid(row=1, column=2, pady=10, padx=20, sticky="we")
+        self.save_button = customtkinter.CTkButton(master=self.frame_middle_bottom, text="Save Changes", command=self.save_dom_file)
+        self.save_button.grid(row=2, column=2, pady=10, padx=20, sticky="we")
+        segemented_button = customtkinter.CTkSegmentedButton(master=self.frame_middle_bottom, values=["Clear all changes", "Undo last change", "Dsicard changes"]) #, command=segmented_button_callback)
+        segemented_button.grid(row=2, column=1, pady=10, padx=20, sticky="we")
+        #segemented_button.set("Value 1")
+
+    def frame_right(self):
+        self.frame_right = customtkinter.CTkFrame(master=self)
+        self.frame_right.grid(row=0, column=3, sticky="nswe", padx=20, pady=(20, 0))
+
+        self.rtitle_frame = customtkinter.CTkFrame(master=self.frame_right, width=300, height=40)
+        self.rtitle_frame.grid(row=0, column=0, sticky="we", padx=15, pady=15)
+        self.rtitle_frame.grid_propagate(False)
+        self.rtitle = customtkinter.CTkLabel(master=self.rtitle_frame, text="Post-Processing")
+        self.rtitle.place(relx=0.5, rely=0.5, anchor="center")
+        self.rtitle.configure(font=("Roboto Medium", 20))
+        
         # ========================= Progress bar + Slider ====================================
         # Create a container frame for the progress bar and slider
-        self.overlay_frame = customtkinter.CTkFrame(master=self.frame_right, width=200, height=60)
-        self.overlay_frame.grid(row=8, column=2, sticky="ew", padx=15, pady=15)
+        self.overlay_frame = customtkinter.CTkFrame(master=self.frame_right, width=300, height=80)
+        self.overlay_frame.grid(row=1, column=0, sticky="we", padx=15, pady=15)
         self.overlay_frame.grid_propagate(False)
 
         # Add the progress bar to the container frame
         self.progressbar = customtkinter.CTkProgressBar(master=self.overlay_frame)
-        self.progressbar.place(relx=0.5, rely=0.2, anchor="center", relwidth=0.9)
-#        self.progress_percentage_label = customtkinter.CTkLabel(master=self.overlay_frame, text="50%", bg_color="black", fg_color="white")
-        self.progress_percentage_label = customtkinter.CTkLabel(master=self.overlay_frame, text="50%", bg_color="black", fg_color="white")
-        self.progress_percentage_label.place(relx=0.5, rely=0.2, anchor="center")
+        self.progressbar.place(relx=0.5, rely=0.6, anchor="center", relwidth=0.9)
+        self.progressbar.set(0.5)
+
+        # Add percentage label
+        self.progress_percentage_label = customtkinter.CTkLabel(master=self.overlay_frame, text="50%")
+        self.progress_percentage_label.place(relx=0.5, rely=0.3, anchor="center")
 
         # Add the slider to the same container frame, slightly below the progress bar
         self.slider_2 = customtkinter.CTkSlider(master=self.overlay_frame, command=self.update_progress)
         self.slider_2.place(relx=0.5, rely=0.8, anchor="center", relwidth=0.9)
-        
         # Initialize the progress bar value somewhere appropriate in your code
         self.slider_2.set(0.5)  # Initial slider position to match progress bar
-        # ========================= Progress bar + Slider ====================================
 
-        # Plan B: save me with the terminal :/
-        self.entry = customtkinter.CTkEntry(master=self.frame_right, width=120,
-                                    placeholder_text="top")# Case Types and Test Cases Selection
-        self.entry.grid(row=9, column=2, pady=20, padx=20, sticky="we")
-        #self.entry.grid(row=9, column=1, columnspan=2, pady=20, padx=20, sticky="we")
+        self.button_5 = customtkinter.CTkButton(master=self.frame_right, text="Execute", command=self.execute_command)
+        self.button_5.grid(row=2, column=0, columnspan=1, pady=20, padx=20, sticky="we")
 
-        self.button_5 = customtkinter.CTkButton(master=self.frame_right, text="Execute",
-                                                command=self.execute_command)
-        self.button_5.grid(row=10, column=2, columnspan=1, pady=20, padx=20, sticky="we")
+    def frame_right_bottom(self):
+        self.frame_right_bottom = customtkinter.CTkFrame(master=self)
+        self.frame_right_bottom.grid(row=1, column=3, sticky="nswe", padx=20, pady=20)
 
-        #self.radio_button_1.select()
+        self.overlay_frame_1 = customtkinter.CTkFrame(master=self.frame_right_bottom, width=300, height=40)
+        self.overlay_frame_1.grid(row=0, column=0, sticky="we", padx=15, pady=15)
+        self.overlay_frame_1.grid_propagate(False)
+        self.settings_label = customtkinter.CTkLabel(master=self.overlay_frame_1, text="Settings")
+        self.settings_label.place(relx=0.5, rely=0.5, anchor="center")
+        self.settings_label.configure(font=("Roboto Medium", 20))
+
+        # Scaling option
+        self.scaling_label = customtkinter.CTkLabel(self.frame_right_bottom, text="UI Scaling:", anchor="w")
+        self.scaling_label.grid(row=1, column=0, padx=20, pady=(10, 0),sticky="we")
+        self.scaling_optionemenu = customtkinter.CTkOptionMenu(self.frame_right_bottom, values=["80%", "90%", "100%", "110%", "120%"], command=self.change_scaling_event)
+        self.scaling_optionemenu.grid(row=2, column=0, padx=20, pady=(10, 20),sticky="we")
+        self.scaling_optionemenu.set("100%")
+
+        # Switch for changing program theme
+        self.switch_2 = customtkinter.CTkSwitch(master=self.frame_right_bottom, text="Dark Mode", command=self.change_mode)
+        self.switch_2.grid(row=3, column=0, pady=10, padx=20, sticky="we")
         self.switch_2.select()
-        self.slider_2.set(0.7)
-        self.progressbar.set(0.5)
-        
+
+        # Initialize the timer parameters
+        self.start_time = time.time()
+        self.elapsed_time_label = customtkinter.CTkLabel(master=self.frame_right_bottom, text="Elapsed Time: 00:00:00", font=("Roboto Medium", 14))
+        self.elapsed_time_label.grid(row=4, column=0, sticky="we", padx=20, pady=10)
         # Call the timer function to start counting the time 
         self.update_elapsed_time()
-        
+           
+    def change_scaling_event(self, new_scaling: str):
+        new_scaling_float = int(new_scaling.replace("%", "")) / 100
+        customtkinter.set_widget_scaling(new_scaling_float)
         
     def activate_geometry_constructor(self):
         # This method can activate the GeometryConstructor
